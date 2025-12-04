@@ -127,50 +127,7 @@ def create_drive_folder(folder_name, parent_id=None):
     
     return folder.get('id')
 
-#def upload_csv_to_drive(csv_data, filename, folder_id):
-    """Create Google Sheet from CSV data (Service Account compatible)"""
-    _, drive_service = get_services()
-    
-    # Create as Google Sheet (native format - no storage quota needed!)
-    sheet_name = filename.replace('.csv', '')
-    
-    file_metadata = {
-        'name': sheet_name,
-        'mimeType': 'application/vnd.google-apps.spreadsheet',  # Google Sheet!
-        'parents': [folder_id]
-    }
-    
-    # Create empty sheet first
-    file = drive_service.files().create(
-        body=file_metadata,
-        fields='id'
-    ).execute()
-    
-    sheet_id = file.get('id')
-    
-    # Now populate with data using Sheets API
-    try:
-        from googleapiclient.discovery import build
-        creds = get_credentials()
-        sheets_service = build('sheets', 'v4', credentials=creds)
-        
-        # Parse CSV data
-        import csv
-        reader = csv.reader(io.StringIO(csv_data))
-        values = list(reader)
-        
-        # Write to sheet
-        sheets_service.spreadsheets().values().update(
-            spreadsheetId=sheet_id,
-            range='A1',
-            valueInputOption='RAW',
-            body={'values': values}
-        ).execute()
-    except Exception as e:
-        print(f"Sheet data population error: {e}")
-        # Sheet created but empty - still useful
-    
-    return sheet_id
+
 
 # ============================================================================
 # DATA EXTRACTION
@@ -479,17 +436,9 @@ def process_uploads(uploaded_files):
             
             time.sleep(0.5)  # Rate limiting
         
-        # Save operation CSV
-        #op_df = pd.DataFrame(operation_results)
-        #op_csv = op_df.to_csv(index=False)
-        #upload_csv_to_drive(op_csv, f"batch_results.csv", op_folder_id)
         
         st.success(f"✅ Operation {op_idx} complete: {len([r for r in operation_results if r['status'] == 'SUCCESS'])}/{len(operation_results)} successful")
     
-    # Save master CSV
-    #master_df = pd.DataFrame(all_results)
-    #master_csv = master_df.to_csv(index=False)
-    #upload_csv_to_drive(master_csv, "master_results.csv", master_folder_id)
     
     # Final summary
     success = len([r for r in all_results if r['status'] == 'SUCCESS'])

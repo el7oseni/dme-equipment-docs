@@ -14,7 +14,8 @@ from pathlib import Path
 import pandas as pd
 
 import google.generativeai as genai
-from google.oauth2 import service_account  # ← CHANGED
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from PIL import Image
 
@@ -75,22 +76,36 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ============================================================================
-# AUTHENTICATION (NEW - Service Account)
+# AUTHENTICATION (OAuth 2.0 - User Account)
 # ============================================================================
 
 @st.cache_resource
 def get_credentials():
-    """Get Google credentials from Streamlit secrets (Service Account)"""
+    """Get Google credentials from Streamlit secrets (OAuth User Account)"""
     try:
-        if "gcp_service_account" in st.secrets:
-            creds = service_account.Credentials.from_service_account_info(
-                dict(st.secrets["gcp_service_account"]),
+        # Check if we have OAuth token in secrets
+        if "google_oauth" in st.secrets:
+            creds = Credentials(
+                token=st.secrets["google_oauth"].get("token"),
+                refresh_token=st.secrets["google_oauth"].get("refresh_token"),
+                token_uri=st.secrets["google_oauth"].get("token_uri"),
+                client_id=st.secrets["google_oauth"].get("client_id"),
+                client_secret=st.secrets["google_oauth"].get("client_secret"),
                 scopes=SCOPES
             )
             return creds
         else:
-            st.error("❌ Service account not found in secrets!")
-            st.error("Please add [gcp_service_account] to your Streamlit secrets.")
+            st.error("❌ OAuth credentials not found in secrets!")
+            st.error("""
+            Please add [google_oauth] section to your Streamlit secrets with:
+            - token
+            - refresh_token
+            - token_uri
+            - client_id
+            - client_secret
+
+            Run the app locally first to generate these credentials.
+            """)
             st.stop()
     except Exception as e:
         st.error(f"❌ Credentials error: {e}")

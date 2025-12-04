@@ -35,10 +35,10 @@ from PIL import Image
 # CONFIGURATION
 # ============================================================================
 
-GEMINI_API_KEY = st.secrets.get("GEMINI_API_KEY", "AIzaSyBdz2FTycDrxoWSmZGXYcp77qSETNmKuBg")
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 OAUTH_CREDENTIALS_FILE = "oauth_credentials.json"
 TOKEN_FILE = "token.json"
-BASE_FOLDER_ID = st.secrets.get("FOLDER_ID", "1exL34puBaxIj1DkBpykEgWzEOf9CdBXl")
+BASE_FOLDER_ID = st.secrets["FOLDER_ID"]
 
 SCOPES = [
     'https://www.googleapis.com/auth/documents',

@@ -127,7 +127,7 @@ def create_drive_folder(folder_name, parent_id=None):
     
     return folder.get('id')
 
-def upload_csv_to_drive(csv_data, filename, folder_id):
+#def upload_csv_to_drive(csv_data, filename, folder_id):
     """Create Google Sheet from CSV data (Service Account compatible)"""
     _, drive_service = get_services()
     
@@ -480,16 +480,16 @@ def process_uploads(uploaded_files):
             time.sleep(0.5)  # Rate limiting
         
         # Save operation CSV
-        op_df = pd.DataFrame(operation_results)
-        op_csv = op_df.to_csv(index=False)
-        upload_csv_to_drive(op_csv, f"batch_results.csv", op_folder_id)
+        #op_df = pd.DataFrame(operation_results)
+        #op_csv = op_df.to_csv(index=False)
+        #upload_csv_to_drive(op_csv, f"batch_results.csv", op_folder_id)
         
         st.success(f"✅ Operation {op_idx} complete: {len([r for r in operation_results if r['status'] == 'SUCCESS'])}/{len(operation_results)} successful")
     
     # Save master CSV
-    master_df = pd.DataFrame(all_results)
-    master_csv = master_df.to_csv(index=False)
-    upload_csv_to_drive(master_csv, "master_results.csv", master_folder_id)
+    #master_df = pd.DataFrame(all_results)
+    #master_csv = master_df.to_csv(index=False)
+    #upload_csv_to_drive(master_csv, "master_results.csv", master_folder_id)
     
     # Final summary
     success = len([r for r in all_results if r['status'] == 'SUCCESS'])

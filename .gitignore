@@ -1,7 +1,7 @@
 oauth_credentials.json
 token.json
+credentials.json
 .streamlit/secrets.toml
 __pycache__/
 *.pyc
 .envdme-doc-generator.json 
-oauth_credentials.json 
